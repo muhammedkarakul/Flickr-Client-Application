@@ -15,7 +15,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        // Creates window for show view on it.
+        
+        window = UIWindow(frame: UIScreen.main.bounds)
+        
+        // Creating first view controller named "initialViewController"
+        
+        let initialViewController = UIViewController()
+        
+        // Paint to red this view background color for we will see changes.
+        
+        initialViewController.view.backgroundColor = .red
+        
+        // We set initialViewController to be root view controller.
+        
+        window?.rootViewController = initialViewController
+        
+        // If you want to see changes on your screen. You must add this line.
+        
+        window?.makeKeyAndVisible()
+        
         return true
     }
 
