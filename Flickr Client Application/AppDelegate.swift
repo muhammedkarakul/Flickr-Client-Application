@@ -23,10 +23,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         // Creating first view controller named "initialViewController"
-        let flickrViewController = FlickrViewController()
+        let initialViewController = InitialViewController()
         
         // Creating navigation controller.
-        let navigationViewController = UINavigationController(rootViewController: flickrViewController)
+        let navigationViewController = UINavigationController(rootViewController: initialViewController)
         
         // We set navigationViewController to be root view controller of window.
         window?.rootViewController = navigationViewController
