@@ -60,6 +60,8 @@
 		5716B34622CF6D7400542754 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				5716B34822CF6DA800542754 /* InitialViewController.swift */,
+				5776E29522E0FE160022E3F1 /* DetailViewController.swift */,
 				57A9D93F22D69291002F3C8C /* PhotoTableViewCell.swift */,
 			);
 			name = View;
@@ -79,15 +81,6 @@
 				5776E29322DE26880022E3F1 /* Service.swift */,
 			);
 			name = Service;
-			sourceTree = "<group>";
-		};
-		57A9D94522D69314002F3C8C /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				5716B34822CF6DA800542754 /* InitialViewController.swift */,
-				5776E29522E0FE160022E3F1 /* DetailViewController.swift */,
-			);
-			name = Controller;
 			sourceTree = "<group>";
 		};
 		57F3D10A22CD6A5000F3D581 = {
@@ -112,7 +105,6 @@
 			isa = PBXGroup;
 			children = (
 				5776E29222DE265B0022E3F1 /* Service */,
-				57A9D94522D69314002F3C8C /* Controller */,
 				5716B34722CF6D7B00542754 /* ViewModel */,
 				5716B34622CF6D7400542754 /* View */,
 				5716B34522CF6D6800542754 /* Model */,

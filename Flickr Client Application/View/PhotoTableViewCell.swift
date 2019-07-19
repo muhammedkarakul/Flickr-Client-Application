@@ -47,6 +47,7 @@ class PhotoTableViewCell: UITableViewCell {
     
     let flickrImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -97,9 +98,9 @@ class PhotoTableViewCell: UITableViewCell {
             make.height.equalTo(50)
         }
         
-        flickrImageView.snp.makeConstraints { (make) in
-            make.height.equalTo(240)
-        }
+//        flickrImageView.snp.makeConstraints { (make) in
+//            make.height.equalTo(240)
+//        }
         
         descriptionLabel.snp.makeConstraints { (make) in
             make.height.equalTo(50)

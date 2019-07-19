@@ -7,27 +7,37 @@
 //
 
 import UIKit
-import SnapKit
 import SwiftyJSON
 import SVProgressHUD
 
-class InitialViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class InitialViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
 
     
     
     // MARK: - Properties
     
-    private var currentPage = 1
-    
     let tableView: UITableView = {
         let table = UITableView()
-        table.rowHeight = 340
+        table.rowHeight = 500
         table.backgroundColor = .black
         table.separatorStyle = .none
         return table
     }()
     
-    private var photoViewModels = [PhotoViewModel]()
+    let photoSearchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.barStyle = .black
+        return searchBar
+    }()
+    
+    private var photoViewModels = [PhotoViewModel]() {
+        didSet {
+            
+            tableView.reloadData()
+            
+            print("TABLE VIEW RELOADED")
+        }
+    }
     
     
     override func viewDidLoad() {
@@ -42,7 +52,7 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         SVProgressHUD.show()
         
-        Service.getRecentPhotos(withPage: String(currentPage)) { (photos, error) in
+        Service.getRecentPhotos() { (photos, error) in
             
             SVProgressHUD.dismiss()
             
@@ -53,7 +63,6 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             self.photoViewModels += photos?.map({return PhotoViewModel(photo: $0)}) ?? []
             
-            self.tableView.reloadData()
         }
         
     }
@@ -62,18 +71,25 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         view.backgroundColor = .black
         title = "Recent Photos"
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.barStyle = .black
+        
+        photoSearchBar.delegate = self
         
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(PhotoTableViewCell.self, forCellReuseIdentifier: PhotoTableViewCell.identifier)
         
+        view.addSubview(photoSearchBar)
         view.addSubview(tableView)
         
+        photoSearchBar.snp.makeConstraints { (make) in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.width.equalToSuperview()
+            make.height.equalTo(50)
+        }
+        
         tableView.snp.makeConstraints { (make) in
-            make.top.left.equalTo(0)
-            make.bottom.right.equalTo(0)
+            make.top.equalTo(photoSearchBar.snp.bottom)
+            make.bottom.right.left.equalTo(0)
         }
     }
     
@@ -96,10 +112,6 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
         print("Current Displayed Cell: \(indexPath.row)")
         
         if indexPath.row + 1 == photoViewModels.count {
-            print("TURN THE PAGE")
-            
-            currentPage = currentPage + 1
-            
             fetchData()
         }
         
@@ -109,15 +121,33 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
         
     }
     
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        print("Current Removed Cell: \(indexPath.row)")
-        
-    }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Selected Row: \(indexPath.row)")
+        let detailViewController = DetailViewController()
+        detailViewController.photoViewModel = photoViewModels[indexPath.row]
+        navigationController?.pushViewController(detailViewController, animated: true)
     }
     
+    // MARK: - Search Bar Delegate
     
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        view.endEditing(true)
+        
+        guard let text = searchBar.text else { return }
+        
+        SVProgressHUD.show()
+        
+        Service.serachPhoto(withText: text) { (photos, error) in
+            
+            SVProgressHUD.dismiss()
+            
+            if let err = error {
+                SVProgressHUD.showError(withStatus: err.localizedDescription)
+                return
+            }
+            
+            self.photoViewModels = photos?.map({return PhotoViewModel(photo: $0)}) ?? []
+            
+        }
+    }
 
 }

@@ -28,6 +28,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Creating navigation controller.
         let navigationViewController = UINavigationController(rootViewController: initialViewController)
         
+        navigationViewController.navigationBar.prefersLargeTitles = true
+        
+        navigationViewController.navigationBar.barStyle = .black
+        
         // We set navigationViewController to be root view controller of window.
         window?.rootViewController = navigationViewController
         

@@ -20,7 +20,7 @@ class Service {
     
     private static let secret = "8eac4175f638ff99"
     
-    public static func getRecentPhotos(withPage page: String, completion: @escaping ([Photo]?, Error?) -> ()) {
+    public static func getRecentPhotos(completion: @escaping ([Photo]?, Error?) -> ()) {
         let parameters = [
             "method" : "flickr.photos.getRecent",
             "api_key" : api_key,
@@ -30,35 +30,10 @@ class Service {
         ]
         
         //request(withParameters: parameters, completion: completion)
-        request(withParameters: parameters) { (response) in
-            guard let data = response.data else { return }
-            
-            do {
-                
-                let json = try JSON(data: data)
-                
-                guard let photosArray = json["photos"]["photo"].array else { return }
-                
-                var photos = [Photo]()
-                
-                for item in photosArray {
-                    if let photoDict = item.dictionaryObject {
-                        photos.append(Photo(photo: photoDict))
-                    }
-                }
-                
-                DispatchQueue.main.async {
-                    completion(photos, nil)
-                }
-                
-            } catch let jsonError {
-                SVProgressHUD.showError(withStatus: "Failed to decode: \(jsonError)")
-            }
-
-        }
+        request(withParameters: parameters, completion: completion)
     }
     
-    public static func serachPhoto(withText text: String, completion: @escaping (DataResponse<Any>) -> Void) {
+    public static func serachPhoto(withText text: String, completion: @escaping ([Photo]?, Error?) -> ()) {
         let parameters = [
             "method" : "flickr.photos.search",
             "api_key" : api_key,
@@ -71,7 +46,7 @@ class Service {
         request(withParameters: parameters, completion: completion)
     }
     
-    public static func getUser(withUserId id: String, completion: @escaping (DataResponse<Any>) -> Void) {
+    public static func getUser(withUserId id: String, completion: @escaping ([Photo]?, Error?) -> ()) {
         let parameters = [
             "method" : "flickr.people.getInfo",
             "api_key" : api_key,
@@ -87,7 +62,7 @@ class Service {
         Alamofire.request(url).response(completionHandler: completion)
     }
     
-    private static func request(withParameters parameters: [String : String], completion: @escaping (DataResponse<Any>) -> Void) {
+    private static func request(withParameters parameters: [String : String], completion: @escaping ([Photo]?, Error?) -> ()) {
         
         Alamofire.request(
             baseUrl,
@@ -95,6 +70,32 @@ class Service {
             parameters: parameters,
             encoding: URLEncoding.default,
             headers: nil
-            ).responseJSON(completionHandler: completion)
+            ).responseJSON { (response) in
+                
+                guard let data = response.data else { return }
+                
+                do {
+                    
+                    let json = try JSON(data: data)
+                    
+                    guard let photosArray = json["photos"]["photo"].array else { return }
+                    
+                    var photos = [Photo]()
+                    
+                    for item in photosArray {
+                        if let photoDict = item.dictionaryObject {
+                            photos.append(Photo(photo: photoDict))
+                        }
+                    }
+                    
+                    DispatchQueue.main.async {
+                        completion(photos, nil)
+                    }
+                    
+                } catch let jsonError {
+                    SVProgressHUD.showError(withStatus: "Failed to decode: \(jsonError)")
+                }
+                
+        }
     }
 }
