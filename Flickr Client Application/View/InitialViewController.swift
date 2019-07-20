@@ -130,6 +130,8 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         guard let text = searchBar.text else { return }
         
+        tableView.setContentOffset(.zero, animated: true)
+        
         SVProgressHUD.show()
         
         Service.serachPhoto(withText: text) { (photos, error) in
