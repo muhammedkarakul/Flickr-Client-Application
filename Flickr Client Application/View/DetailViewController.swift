@@ -9,7 +9,7 @@
 import UIKit
 import SVProgressHUD
 
-class DetailViewController: UIViewController {
+class DetailViewController: UIViewController, UIScrollViewDelegate {
     
     // MARK: - Properties
     
@@ -33,14 +33,47 @@ class DetailViewController: UIViewController {
                 })
             }
             
+            if let buddyiconUrl = photoViewModel?.buddyiconUrl {
+                
+                
+                print("BUDDYICON_URL: \(buddyiconUrl)")
+                
+                SVProgressHUD.show()
+                
+                Service.getImage(withUrl: buddyiconUrl, completion: { (response) in
+                    
+                    SVProgressHUD.dismiss()
+                    
+                    if let imageData = response.data {
+                        
+                        self.buddyiconImageView.image = UIImage(data: imageData)
+                        
+                    }
+                })
+            }
+            
             titleLabel.text = photoViewModel?.title
         }
     }
+    
+    private let buddyiconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 25
+        imageView.clipsToBounds = true
+        return imageView
+    }()
     
     private let ownernameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         return label
+    }()
+    
+    lazy var cellTitleStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [buddyiconImageView, ownernameLabel])
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        return stackView
     }()
     
     private let photoImageView: UIImageView = {
@@ -49,16 +82,27 @@ class DetailViewController: UIViewController {
         return imageView
     }()
     
+    private let zoomScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        
+        scrollView.minimumZoomScale = 1.0
+        scrollView.maximumZoomScale = 6.0
+        
+        return scrollView
+    }()
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
+        label.numberOfLines = 0
         return label
     }()
     
     lazy var containerStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [ownernameLabel, photoImageView, titleLabel])
+        let stackView = UIStackView(arrangedSubviews: [cellTitleStackView, zoomScrollView, titleLabel])
         stackView.distribution = .fill
         stackView.axis = .vertical
+        stackView.backgroundColor = .red
         return stackView
     }()
     
@@ -75,23 +119,28 @@ class DetailViewController: UIViewController {
 
         title = "Photo Detail"
         
+        zoomScrollView.delegate = self
+        
         setupViews()
     }
     
     private func setupViews() {
         
         view.addSubview(containerView)
+        
+        zoomScrollView.addSubview(photoImageView)
     
         containerView.addSubview(containerStackView)
         
         containerView.snp.makeConstraints { (make) in
-            make.top.greaterThanOrEqualTo(view.safeAreaLayoutGuide.snp.top)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.left.equalTo(8)
             make.bottom.right.equalTo(-8)
         }
         
         containerStackView.snp.makeConstraints { (make) in
-            make.size.equalToSuperview()
+            make.top.left.equalTo(8)
+            make.bottom.right.equalTo(-8)
         }
         
         ownernameLabel.snp.makeConstraints { (make) in
@@ -101,6 +150,20 @@ class DetailViewController: UIViewController {
         titleLabel.snp.makeConstraints { (make) in
             make.height.equalTo(50)
         }
+        
+        buddyiconImageView.snp.makeConstraints { (make) in
+            make.size.equalTo(48)
+        }
+        
+        photoImageView.snp.makeConstraints { (make) in
+            make.size.equalTo(zoomScrollView.snp.size)
+        }
+    }
+    
+    // MARK: - UIScrollView Delegate
+    
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return photoImageView
     }
 
 }

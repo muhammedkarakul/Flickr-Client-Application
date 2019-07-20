@@ -34,15 +34,48 @@ class PhotoTableViewCell: UITableViewCell {
                 })
             }
             
+            if let buddyiconUrl = photoViewModel.buddyiconUrl {
+                
+                
+                print("BUDDYICON_URL: \(buddyiconUrl)")
+                
+                SVProgressHUD.show()
+                
+                Service.getImage(withUrl: buddyiconUrl, completion: { (response) in
+                    
+                    SVProgressHUD.dismiss()
+                    
+                    if let imageData = response.data {
+                        
+                        self.buddyiconImageView.image = UIImage(data: imageData)
+                        
+                    }
+                })
+            }
+            
             descriptionLabel.text = photoViewModel.title
             
         }
     }
     
+    let buddyiconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 25
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    
     let userNameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         return label
+    }()
+    
+    lazy var cellTitleStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [buddyiconImageView, userNameLabel])
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        return stackView
     }()
     
     let flickrImageView: UIImageView = {
@@ -58,9 +91,10 @@ class PhotoTableViewCell: UITableViewCell {
     }()
     
     lazy var flickrStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [userNameLabel, flickrImageView, descriptionLabel])
+        let stackView = UIStackView(arrangedSubviews: [cellTitleStackView, flickrImageView, descriptionLabel])
         stackView.distribution = .fill
         stackView.axis = .vertical
+        stackView.spacing = 8
         return stackView
     }()
     
@@ -90,20 +124,20 @@ class PhotoTableViewCell: UITableViewCell {
         }
         
         flickrStackView.snp.makeConstraints { (make) in
-            make.top.left.equalTo(0)
-            make.bottom.right.equalTo(0)
+            make.top.left.equalTo(8)
+            make.bottom.right.equalTo(-8)
         }
         
         userNameLabel.snp.makeConstraints { (make) in
             make.height.equalTo(50)
         }
         
-//        flickrImageView.snp.makeConstraints { (make) in
-//            make.height.equalTo(240)
-//        }
-        
         descriptionLabel.snp.makeConstraints { (make) in
             make.height.equalTo(50)
+        }
+        
+        buddyiconImageView.snp.makeConstraints { (make) in
+            make.width.height.equalTo(48)
         }
         
     }

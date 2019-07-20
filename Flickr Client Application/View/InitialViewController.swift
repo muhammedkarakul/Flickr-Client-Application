@@ -21,6 +21,7 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
         table.rowHeight = 500
         table.backgroundColor = .black
         table.separatorStyle = .none
+        table.keyboardDismissMode = .onDrag
         return table
     }()
     
@@ -32,10 +33,7 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     private var photoViewModels = [PhotoViewModel]() {
         didSet {
-            
             tableView.reloadData()
-            
-            print("TABLE VIEW RELOADED")
         }
     }
     
@@ -108,8 +106,6 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        print("Current Displayed Cell: \(indexPath.row)")
         
         if indexPath.row + 1 == photoViewModels.count {
             fetchData()

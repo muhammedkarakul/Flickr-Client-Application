@@ -11,6 +11,7 @@ import UIKit
 class PhotoViewModel {
     
     var ownername: String?
+    var buddyiconUrl: String?
     var lowQualityImageUrl: String?
     var highQualityImageUrl: String?
     var title: String?
@@ -18,6 +19,7 @@ class PhotoViewModel {
     // Dependency Injection (DI)
     init(photo: Photo) {
         ownername = photo.ownername
+        buddyiconUrl = photo.buddyiconUrl
         lowQualityImageUrl = photo.lowQualityImageUrl
         highQualityImageUrl = photo.highQualityImageUrl
         title = photo.title

@@ -29,8 +29,7 @@ class Service {
             "extras" : "url_q,url_z,owner_name,date_upload"
         ]
         
-        //request(withParameters: parameters, completion: completion)
-        request(withParameters: parameters, completion: completion)
+        getPhotosFromRequest(withParameters: parameters, completion: completion)
     }
     
     public static func serachPhoto(withText text: String, completion: @escaping ([Photo]?, Error?) -> ()) {
@@ -43,26 +42,60 @@ class Service {
             "extras" : "url_q,url_z,owner_name,date_upload"
         ]
         
-        request(withParameters: parameters, completion: completion)
+        getPhotosFromRequest(withParameters: parameters, completion: completion)
     }
     
-    public static func getUser(withUserId id: String, completion: @escaping ([Photo]?, Error?) -> ()) {
-        let parameters = [
-            "method" : "flickr.people.getInfo",
-            "api_key" : api_key,
-            "user_id" : id,
-            "format" : format,
-            "nojsoncallback" : "1"
-        ]
-        
-        request(withParameters: parameters, completion: completion)
-    }
-    
+    /**
+     Gets image object from flickr with url address.
+     
+     - Parameter url: URL address of image object.
+     - Parameter completion: Carries api response.
+     */
     public static func getImage(withUrl url: String, completion: @escaping (DefaultDataResponse) -> Void) {
         Alamofire.request(url).response(completionHandler: completion)
     }
     
-    private static func request(withParameters parameters: [String : String], completion: @escaping ([Photo]?, Error?) -> ()) {
+    /**
+     Gets photo objects from response of api. If photo object not available, return error.
+     
+     - Parameter parameters: To be sended parameters for flickr api.
+     - Parameter completion: Carries photo objects or error object.
+     */
+    private static func getPhotosFromRequest(withParameters parameters: [String : String], completion: @escaping ([Photo]?, Error?) -> ()) {
+        request(withParameters: parameters) { (response) in
+            guard let data = response.data else { return }
+            
+            do {
+                
+                let json = try JSON(data: data)
+                
+                guard let photosArray = json["photos"]["photo"].array else { return }
+                
+                var photos = [Photo]()
+                
+                for item in photosArray {
+                    if let photoDict = item.dictionaryObject {
+                        photos.append(Photo(photo: photoDict))
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    completion(photos, nil)
+                }
+                
+            } catch let jsonError {
+                SVProgressHUD.showError(withStatus: "Failed to decode: \(jsonError)")
+            }
+        }
+    }
+    
+    /**
+     Base network request method.
+     
+     - Parameter parameters: To be sended parameters for flickr api.
+     - Parameter completion: Carries returned response from api.
+     */
+    private static func request(withParameters parameters: [String : String], completion: @escaping (DataResponse<Any>) -> Void) {
         
         Alamofire.request(
             baseUrl,
@@ -70,32 +103,6 @@ class Service {
             parameters: parameters,
             encoding: URLEncoding.default,
             headers: nil
-            ).responseJSON { (response) in
-                
-                guard let data = response.data else { return }
-                
-                do {
-                    
-                    let json = try JSON(data: data)
-                    
-                    guard let photosArray = json["photos"]["photo"].array else { return }
-                    
-                    var photos = [Photo]()
-                    
-                    for item in photosArray {
-                        if let photoDict = item.dictionaryObject {
-                            photos.append(Photo(photo: photoDict))
-                        }
-                    }
-                    
-                    DispatchQueue.main.async {
-                        completion(photos, nil)
-                    }
-                    
-                } catch let jsonError {
-                    SVProgressHUD.showError(withStatus: "Failed to decode: \(jsonError)")
-                }
-                
-        }
+        ).responseJSON(completionHandler: completion)
     }
 }
