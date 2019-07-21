@@ -8,6 +8,7 @@
 
 import UIKit
 import SVProgressHUD
+import Kingfisher
 
 class DetailViewController: UIViewController, UIScrollViewDelegate {
     
@@ -17,40 +18,13 @@ class DetailViewController: UIViewController, UIScrollViewDelegate {
         didSet {
             ownernameLabel.text = photoViewModel?.ownername
             
-            if let url = photoViewModel?.highQualityImageUrl {
-                
-                SVProgressHUD.show()
-                
-                Service.getImage(withUrl: url, completion: { (response) in
-                    
-                    SVProgressHUD.dismiss()
-                    
-                    if let imageData = response.data {
-                        
-                        self.photoImageView.image = UIImage(data: imageData)
-                        
-                    }
-                })
-            }
+            guard let photoUrlString = photoViewModel?.highQualityImageUrl else { return }
+            let photoUrl = URL(string: photoUrlString)
+            photoImageView.kf.setImage(with: photoUrl)
             
-            if let buddyiconUrl = photoViewModel?.buddyiconUrl {
-                
-                
-                print("BUDDYICON_URL: \(buddyiconUrl)")
-                
-                SVProgressHUD.show()
-                
-                Service.getImage(withUrl: buddyiconUrl, completion: { (response) in
-                    
-                    SVProgressHUD.dismiss()
-                    
-                    if let imageData = response.data {
-                        
-                        self.buddyiconImageView.image = UIImage(data: imageData)
-                        
-                    }
-                })
-            }
+            guard let buddyiconUrlString = photoViewModel?.buddyiconUrl else { return }
+            let buddyiconUrl = URL(string: buddyiconUrlString)
+            buddyiconImageView.kf.setImage(with: buddyiconUrl)
             
             titleLabel.text = photoViewModel?.title
         }
