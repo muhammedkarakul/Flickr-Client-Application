@@ -18,13 +18,9 @@ class DetailViewController: UIViewController, UIScrollViewDelegate {
         didSet {
             ownernameLabel.text = photoViewModel?.ownername
             
-            guard let photoUrlString = photoViewModel?.highQualityImageUrl else { return }
-            let photoUrl = URL(string: photoUrlString)
-            photoImageView.kf.setImage(with: photoUrl)
+            photoImageView.kf.setImage(with: photoViewModel?.highQualityImageUrl)
             
-            guard let buddyiconUrlString = photoViewModel?.buddyiconUrl else { return }
-            let buddyiconUrl = URL(string: buddyiconUrlString)
-            buddyiconImageView.kf.setImage(with: buddyiconUrl)
+            buddyiconImageView.kf.setImage(with: photoViewModel?.buddyiconUrl)
             
             titleLabel.text = photoViewModel?.title
         }

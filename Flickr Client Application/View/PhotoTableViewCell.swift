@@ -8,7 +8,6 @@
 
 import UIKit
 import SnapKit
-import SVProgressHUD
 import Kingfisher
 
 class PhotoTableViewCell: UITableViewCell {
@@ -19,13 +18,9 @@ class PhotoTableViewCell: UITableViewCell {
         didSet {
             userNameLabel.text = photoViewModel.ownername
             
-            guard let photoUrlString = photoViewModel.lowQualityImageUrl else { return }
-            let photoUrl = URL(string: photoUrlString)
-            flickrImageView.kf.setImage(with: photoUrl)
+            flickrImageView.kf.setImage(with: photoViewModel.lowQualityImageUrl)
             
-            guard let buddyiconUrlString = photoViewModel.buddyiconUrl else { return }
-            let buddyiconUrl = URL(string: buddyiconUrlString)
-            buddyiconImageView.kf.setImage(with: buddyiconUrl)
+            buddyiconImageView.kf.setImage(with: photoViewModel.buddyiconUrl)
             
             descriptionLabel.text = photoViewModel.title
             

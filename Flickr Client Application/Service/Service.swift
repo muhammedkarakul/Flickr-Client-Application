@@ -46,16 +46,6 @@ class Service {
     }
     
     /**
-     Gets image object from flickr with url address.
-     
-     - Parameter url: URL address of image object.
-     - Parameter completion: Carries api response.
-     */
-    public static func getImage(withUrl url: String, completion: @escaping (DefaultDataResponse) -> Void) {
-        Alamofire.request(url).response(completionHandler: completion)
-    }
-    
-    /**
      Gets photo objects from response of api. If photo object not available, return error.
      
      - Parameter parameters: To be sended parameters for flickr api.
