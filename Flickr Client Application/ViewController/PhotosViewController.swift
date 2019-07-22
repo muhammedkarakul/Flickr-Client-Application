@@ -7,33 +7,17 @@
 //
 
 import UIKit
-import SwiftyJSON
 import SVProgressHUD
 
-class InitialViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class PhotosViewController: UIViewController {
 
-    
-    
     // MARK: - Properties
     
-    let tableView: UITableView = {
-        let table = UITableView()
-        table.rowHeight = 500
-        table.backgroundColor = .black
-        table.separatorStyle = .none
-        table.keyboardDismissMode = .onDrag
-        return table
-    }()
-    
-    let photoSearchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.barStyle = .black
-        return searchBar
-    }()
+    private let photosView = PhotosView(frame: UIScreen.main.bounds)
     
     private var photoViewModels = [PhotoViewModel]() {
         didSet {
-            tableView.reloadData()
+            photosView.tableView.reloadData()
         }
     }
     
@@ -70,28 +54,21 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.backgroundColor = .black
         title = "Recent Photos"
         
-        photoSearchBar.delegate = self
+        view.addSubview(photosView)
         
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(PhotoTableViewCell.self, forCellReuseIdentifier: PhotoTableViewCell.identifier)
+        photosView.photoSearchBar.delegate = self
         
-        view.addSubview(photoSearchBar)
-        view.addSubview(tableView)
+        photosView.tableView.delegate = self
+        photosView.tableView.dataSource = self
+        photosView.tableView.register(PhotoTableViewCell.self, forCellReuseIdentifier: PhotoTableViewCell.identifier)
         
-        photoSearchBar.snp.makeConstraints { (make) in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.width.equalToSuperview()
-            make.height.equalTo(50)
-        }
-        
-        tableView.snp.makeConstraints { (make) in
-            make.top.equalTo(photoSearchBar.snp.bottom)
-            make.bottom.right.left.equalTo(0)
-        }
     }
-    
-    // MARK: - UITableView Delegate
+
+}
+
+// MARK: - Table View Data Source
+
+extension PhotosViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return photoViewModels.count
@@ -100,10 +77,15 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTableViewCell.identifier, for: indexPath) as! PhotoTableViewCell
         
-        //cell.photoViewModel = photoViewModels[indexPath.row]
-        
         return cell
     }
+    
+}
+
+// MARK: - Table View Delegate
+
+extension PhotosViewController: UITableViewDelegate {
+    // MARK: - UITableView Delegate
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
@@ -113,7 +95,9 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         guard let photoCell = cell as? PhotoTableViewCell else { return }
         
-        photoCell.photoViewModel = photoViewModels[indexPath.row]
+        if photoViewModels.count > indexPath.row {
+            photoCell.photoViewModel = photoViewModels[indexPath.row]
+        }
         
     }
     
@@ -123,14 +107,19 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
         navigationController?.pushViewController(detailViewController, animated: true)
     }
     
-    // MARK: - Search Bar Delegate
+}
+
+// MARK: - Search Bar Delegate
+
+extension PhotosViewController: UISearchBarDelegate {
+    
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         view.endEditing(true)
         
         guard let text = searchBar.text else { return }
         
-        tableView.setContentOffset(.zero, animated: true)
+        photosView.tableView.setContentOffset(.zero, animated: true)
         
         SVProgressHUD.show()
         
@@ -147,5 +136,4 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
             
         }
     }
-
 }

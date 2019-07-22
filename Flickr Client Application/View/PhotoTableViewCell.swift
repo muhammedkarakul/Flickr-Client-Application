@@ -14,16 +14,15 @@ class PhotoTableViewCell: UITableViewCell {
     
     static let identifier = "cell"
     
-    var photoViewModel: PhotoViewModel! {
+    var photoViewModel: PhotoViewModel? {
         didSet {
-            userNameLabel.text = photoViewModel.ownername
+            userNameLabel.text = photoViewModel?.ownername
             
-            flickrImageView.kf.setImage(with: photoViewModel.lowQualityImageUrl)
+            flickrImageView.kf.setImage(with: photoViewModel?.lowQualityImageUrl)
             
-            buddyiconImageView.kf.setImage(with: photoViewModel.buddyiconUrl)
+            buddyiconImageView.kf.setImage(with: photoViewModel?.buddyiconUrl)
             
-            descriptionLabel.text = photoViewModel.title
-            
+            descriptionLabel.text = photoViewModel?.title
         }
     }
     
@@ -79,6 +78,7 @@ class PhotoTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         backgroundColor = .black
+        selectionStyle = .none
         
         setupViews()
     }

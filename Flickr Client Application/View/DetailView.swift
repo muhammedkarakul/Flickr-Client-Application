@@ -1,39 +1,24 @@
 //
-//  DetailViewController.swift
+//  DetailView.swift
 //  Flickr Client Application
 //
-//  Created by Muhammed Karakul on 18.07.2019.
+//  Created by Muhammed Karakul on 22.07.2019.
 //  Copyright © 2019 Muhammed Karakul. All rights reserved.
 //
 
 import UIKit
-import SVProgressHUD
-import Kingfisher
+import SnapKit
 
-class DetailViewController: UIViewController, UIScrollViewDelegate {
-    
-    // MARK: - Properties
-    
-    public var photoViewModel: PhotoViewModel? {
-        didSet {
-            ownernameLabel.text = photoViewModel?.ownername
-            
-            photoImageView.kf.setImage(with: photoViewModel?.highQualityImageUrl)
-            
-            buddyiconImageView.kf.setImage(with: photoViewModel?.buddyiconUrl)
-            
-            titleLabel.text = photoViewModel?.title
-        }
-    }
-    
-    private let buddyiconImageView: UIImageView = {
+class DetailView: UIView {
+
+    let buddyiconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 25
         imageView.clipsToBounds = true
         return imageView
     }()
     
-    private let ownernameLabel: UILabel = {
+    let ownernameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         return label
@@ -46,13 +31,13 @@ class DetailViewController: UIViewController, UIScrollViewDelegate {
         return stackView
     }()
     
-    private let photoImageView: UIImageView = {
+    let photoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
-    private let zoomScrollView: UIScrollView = {
+    let zoomScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         
         scrollView.minimumZoomScale = 1.0
@@ -61,7 +46,7 @@ class DetailViewController: UIViewController, UIScrollViewDelegate {
         return scrollView
     }()
     
-    private let titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.numberOfLines = 0
@@ -83,27 +68,27 @@ class DetailViewController: UIViewController, UIScrollViewDelegate {
         view.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
         return view
     }()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        title = "Photo Detail"
-        
-        zoomScrollView.delegate = self
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupViews()
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private func setupViews() {
         
-        view.addSubview(containerView)
+        self.addSubview(containerView)
         
         zoomScrollView.addSubview(photoImageView)
-    
+        
         containerView.addSubview(containerStackView)
         
         containerView.snp.makeConstraints { (make) in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.top.equalTo(self.safeAreaLayoutGuide.snp.top)
             make.left.equalTo(8)
             make.bottom.right.equalTo(-8)
         }
@@ -128,12 +113,7 @@ class DetailViewController: UIViewController, UIScrollViewDelegate {
         photoImageView.snp.makeConstraints { (make) in
             make.size.equalTo(zoomScrollView.snp.size)
         }
-    }
-    
-    // MARK: - UIScrollView Delegate
-    
-    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return photoImageView
+        
     }
 
 }
