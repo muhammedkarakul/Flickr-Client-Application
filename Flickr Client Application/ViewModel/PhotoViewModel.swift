@@ -7,23 +7,40 @@
 //
 
 import UIKit
+import Kingfisher
 
 class PhotoViewModel {
     
-    var ownername: String?
-    var buddyiconUrl: URL?
-    var lowQualityImageUrl: URL?
-    var highQualityImageUrl: URL?
-    var title: String?
+    var photo: FlickrURLs?
+    var buddyIconURL: URL?
     
     // Dependency Injection (DI)
-    init(photo: Photo) {
-        ownername = photo.ownername
-        buddyiconUrl = photo.buddyiconUrl
-        lowQualityImageUrl = photo.lowQualityImageUrl
-        highQualityImageUrl = photo.highQualityImageUrl
-        title = photo.title
+    init(photo: FlickrURLs) {
+        self.photo = photo
         
+        guard
+            let farm = photo.farm,
+            let server = photo.server,
+            let owner = photo.owner
+            else { return }
+        
+        buddyIconURL = URL(string: "http://farm\(farm).staticflickr.com/\(server)/buddyicons/\(owner).jpg")
+    }
+    
+    func configure(_ cell: PhotoTableViewCell) {
+        
+        cell.buddyiconImageView.kf.setImage(with: buddyIconURL)
+        cell.userNameLabel.text = photo?.owner
+        cell.flickrImageView.kf.setImage(with: photo?.lowResPhotoUrl)
+        cell.descriptionLabel.text = photo?.title
+        
+    }
+    
+    func configure(_ view: DetailView) {
+        view.buddyiconImageView.kf.setImage(with: buddyIconURL)
+        view.ownernameLabel.text = photo?.ownername
+        view.photoImageView.kf.setImage(with: photo?.highResPhotoUrl)
+        view.titleLabel.text = photo?.title
     }
 
 }

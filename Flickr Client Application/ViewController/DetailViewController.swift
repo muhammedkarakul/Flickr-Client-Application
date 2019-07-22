@@ -16,17 +16,7 @@ class DetailViewController: UIViewController {
     
     private let detailView = DetailView(frame: UIScreen.main.bounds)
     
-    public var photoViewModel: PhotoViewModel? {
-        didSet {
-            detailView.ownernameLabel.text = photoViewModel?.ownername
-            
-            detailView.photoImageView.kf.setImage(with: photoViewModel?.highQualityImageUrl)
-            
-            detailView.buddyiconImageView.kf.setImage(with: photoViewModel?.buddyiconUrl)
-            
-            detailView.titleLabel.text = photoViewModel?.title
-        }
-    }
+    public var photoViewModel: PhotoViewModel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,11 +29,13 @@ class DetailViewController: UIViewController {
         
         title = "Photo Detail"
         
+        photoViewModel?.configure(detailView)
+        
+        view.addSubview(detailView)
+        
         detailView.zoomScrollView.delegate = self
     }
     
-
-
 }
 
 // MARK: - UIScrollView Delegate

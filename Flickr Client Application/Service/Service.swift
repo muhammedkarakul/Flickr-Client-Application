@@ -8,7 +8,6 @@
 
 import Foundation
 import Alamofire
-import SwiftyJSON
 import SVProgressHUD
 
 class Service {
@@ -20,7 +19,7 @@ class Service {
     
     private static let secret = "8eac4175f638ff99"
     
-    public static func getRecentPhotos(completion: @escaping ([Photo]?, Error?) -> ()) {
+    public static func getRecentPhotos(completion: @escaping ([FlickrURLs]?, Error?) -> ()) {
         let parameters = [
             "method" : "flickr.photos.getRecent",
             "api_key" : api_key,
@@ -32,7 +31,7 @@ class Service {
         getPhotosFromRequest(withParameters: parameters, completion: completion)
     }
     
-    public static func serachPhoto(withText text: String, completion: @escaping ([Photo]?, Error?) -> ()) {
+    public static func serachPhoto(withText text: String, completion: @escaping ([FlickrURLs]?, Error?) -> ()) {
         let parameters = [
             "method" : "flickr.photos.search",
             "api_key" : api_key,
@@ -51,31 +50,27 @@ class Service {
      - Parameter parameters: To be sended parameters for flickr api.
      - Parameter completion: Carries photo objects or error object.
      */
-    private static func getPhotosFromRequest(withParameters parameters: [String : String], completion: @escaping ([Photo]?, Error?) -> ()) {
+    private static func getPhotosFromRequest(withParameters parameters: [String : String], completion: @escaping ([FlickrURLs]?, Error?) -> ()) {
         request(withParameters: parameters) { (response) in
             guard let data = response.data else { return }
             
+            print("DATA: \(data)")
+            
             do {
+                let flickrImageResult = try JSONDecoder().decode(FlickrImageResult.self, from: data)
                 
-                let json = try JSON(data: data)
-                
-                guard let photosArray = json["photos"]["photo"].array else { return }
-                
-                var photos = [Photo]()
-                
-                for item in photosArray {
-                    if let photoDict = item.dictionaryObject {
-                        photos.append(Photo(photo: photoDict))
-                    }
-                }
+                guard let photos = flickrImageResult.photos?.photo else { return }
                 
                 DispatchQueue.main.async {
                     completion(photos, nil)
                 }
-                
-            } catch let jsonError {
-                SVProgressHUD.showError(withStatus: "Failed to decode: \(jsonError)")
+
+            } catch (let error) {
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
             }
+            
         }
     }
     

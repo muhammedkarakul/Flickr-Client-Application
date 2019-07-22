@@ -14,17 +14,17 @@ class PhotoTableViewCell: UITableViewCell {
     
     static let identifier = "cell"
     
-    var photoViewModel: PhotoViewModel? {
-        didSet {
-            userNameLabel.text = photoViewModel?.ownername
-            
-            flickrImageView.kf.setImage(with: photoViewModel?.lowQualityImageUrl)
-            
-            buddyiconImageView.kf.setImage(with: photoViewModel?.buddyiconUrl)
-            
-            descriptionLabel.text = photoViewModel?.title
-        }
-    }
+//    var photoViewModel: PhotoViewModel? {
+//        didSet {
+//            userNameLabel.text = photoViewModel?.photo?.ownername
+//            
+//            flickrImageView.kf.setImage(with: photoViewModel?.photo?.lowQualityImageUrl)
+//            
+//            buddyiconImageView.kf.setImage(with: photoViewModel?.photo?.buddyiconUrl)
+//            
+//            descriptionLabel.text = photoViewModel?.photo?.title
+//        }
+//    }
     
     let buddyiconImageView: UIImageView = {
         let imageView = UIImageView()
