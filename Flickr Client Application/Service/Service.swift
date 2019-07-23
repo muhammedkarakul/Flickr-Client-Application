@@ -19,7 +19,7 @@ class Service {
     
     private static let secret = "8eac4175f638ff99"
     
-    public static func getRecentPhotos(completion: @escaping ([FlickrURLs]?, Error?) -> ()) {
+    public static func getRecentPhotos(completion: @escaping ([FlickrPhotos]?, Error?) -> ()) {
         let parameters = [
             "method" : "flickr.photos.getRecent",
             "api_key" : api_key,
@@ -31,7 +31,7 @@ class Service {
         getPhotosFromRequest(withParameters: parameters, completion: completion)
     }
     
-    public static func serachPhoto(withText text: String, completion: @escaping ([FlickrURLs]?, Error?) -> ()) {
+    public static func serachPhoto(withText text: String, completion: @escaping ([FlickrPhotos]?, Error?) -> ()) {
         let parameters = [
             "method" : "flickr.photos.search",
             "api_key" : api_key,
@@ -50,7 +50,7 @@ class Service {
      - Parameter parameters: To be sended parameters for flickr api.
      - Parameter completion: Carries photo objects or error object.
      */
-    private static func getPhotosFromRequest(withParameters parameters: [String : String], completion: @escaping ([FlickrURLs]?, Error?) -> ()) {
+    private static func getPhotosFromRequest(withParameters parameters: [String : String], completion: @escaping ([FlickrPhotos]?, Error?) -> ()) {
         request(withParameters: parameters) { (response) in
             guard let data = response.data else { return }
             

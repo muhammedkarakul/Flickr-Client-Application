@@ -8,7 +8,9 @@
 
 import UIKit
 
-struct FlickrURLs: Codable {
+// TODO: - FlickrPhoto - Photo
+
+struct FlickrPhotos: Codable {
     let owner : String?
     let ownername: String?
     let server: String?

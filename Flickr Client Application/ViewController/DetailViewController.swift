@@ -14,7 +14,7 @@ class DetailViewController: UIViewController {
     
     // MARK: - Properties
     
-    private let detailView = DetailView(frame: UIScreen.main.bounds)
+    private lazy var detailView = DetailView()
     
     public var photoViewModel: PhotoViewModel?
 
@@ -34,6 +34,10 @@ class DetailViewController: UIViewController {
         view.addSubview(detailView)
         
         detailView.zoomScrollView.delegate = self
+        
+        detailView.snp.makeConstraints { (make) in
+            make.size.equalToSuperview()
+        }
     }
     
 }

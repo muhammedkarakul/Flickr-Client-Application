@@ -13,7 +13,7 @@ class PhotosViewController: UIViewController {
 
     // MARK: - Properties
     
-    private let photosView = PhotosView(frame: UIScreen.main.bounds)
+    private let photosView = PhotosView()
     
     private var photoViewModels = [PhotoViewModel]() {
         didSet {
@@ -39,6 +39,10 @@ class PhotosViewController: UIViewController {
         view.addSubview(photosView)
         
         photosView.photoSearchBar.delegate = self
+        
+        photosView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
         
         setupTableView()
     }

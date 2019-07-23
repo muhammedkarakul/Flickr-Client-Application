@@ -11,11 +11,11 @@ import Kingfisher
 
 class PhotoViewModel {
     
-    var photo: FlickrURLs?
+    var photo: FlickrPhotos?
     var buddyIconURL: URL?
     
     // Dependency Injection (DI)
-    init(photo: FlickrURLs) {
+    init(photo: FlickrPhotos) {
         self.photo = photo
         
         guard
@@ -30,9 +30,9 @@ class PhotoViewModel {
     func configure(_ cell: PhotoTableViewCell) {
         
         cell.buddyiconImageView.kf.setImage(with: buddyIconURL)
-        cell.userNameLabel.text = photo?.owner
+        cell.ownernameLabel.text = photo?.owner
         cell.flickrImageView.kf.setImage(with: photo?.lowResPhotoUrl)
-        cell.descriptionLabel.text = photo?.title
+        cell.titleLabel.text = photo?.title
         
     }
     

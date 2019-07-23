@@ -7,24 +7,12 @@
 //
 
 import UIKit
-import SnapKit
-import Kingfisher
 
 class PhotoTableViewCell: UITableViewCell {
     
-    static let identifier = "cell"
+    // MARK: - Properties
     
-//    var photoViewModel: PhotoViewModel? {
-//        didSet {
-//            userNameLabel.text = photoViewModel?.photo?.ownername
-//            
-//            flickrImageView.kf.setImage(with: photoViewModel?.photo?.lowQualityImageUrl)
-//            
-//            buddyiconImageView.kf.setImage(with: photoViewModel?.photo?.buddyiconUrl)
-//            
-//            descriptionLabel.text = photoViewModel?.photo?.title
-//        }
-//    }
+    static let identifier = "cell"
     
     let buddyiconImageView: UIImageView = {
         let imageView = UIImageView()
@@ -33,14 +21,14 @@ class PhotoTableViewCell: UITableViewCell {
         return imageView
     }()
     
-    let userNameLabel: UILabel = {
+    let ownernameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         return label
     }()
     
     lazy var cellTitleStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [buddyiconImageView, userNameLabel])
+        let stackView = UIStackView(arrangedSubviews: [buddyiconImageView, ownernameLabel])
         stackView.axis = .horizontal
         stackView.spacing = 8
         return stackView
@@ -52,14 +40,14 @@ class PhotoTableViewCell: UITableViewCell {
         return imageView
     }()
     
-    let descriptionLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         return label
     }()
     
     lazy var flickrStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [cellTitleStackView, flickrImageView, descriptionLabel])
+        let stackView = UIStackView(arrangedSubviews: [cellTitleStackView, flickrImageView, titleLabel])
         stackView.distribution = .fill
         stackView.axis = .vertical
         stackView.spacing = 8
@@ -73,6 +61,8 @@ class PhotoTableViewCell: UITableViewCell {
         view.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
         return view
     }()
+    
+    // MARK: - Setup View
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -84,35 +74,59 @@ class PhotoTableViewCell: UITableViewCell {
     }
     
     private func setupViews() {
+        
+        setupContainerView()
+        
+        setupFlickrStackView()
+        
+        setupUserNameLabel()
+        
+        setupBuddyIconImageView()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Layout
+    
+    private func setupContainerView() {
+        
         addSubview(containerView)
-        containerView.addSubview(flickrStackView)
         
         containerView.snp.makeConstraints { (make) in
             make.top.left.equalTo(8)
             make.bottom.right.equalTo(-8)
         }
+    }
+    
+    private func setupFlickrStackView() {
+        
+        containerView.addSubview(flickrStackView)
         
         flickrStackView.snp.makeConstraints { (make) in
             make.top.left.equalTo(8)
             make.bottom.right.equalTo(-8)
         }
         
-        userNameLabel.snp.makeConstraints { (make) in
+    }
+    
+    private func setupUserNameLabel() {
+        ownernameLabel.snp.makeConstraints { (make) in
             make.height.equalTo(50)
         }
-        
-        descriptionLabel.snp.makeConstraints { (make) in
+    }
+    
+    private func setupTitleLabel() {
+        titleLabel.snp.makeConstraints { (make) in
             make.height.equalTo(50)
         }
-        
+    }
+    
+    private func setupBuddyIconImageView() {
         buddyiconImageView.snp.makeConstraints { (make) in
             make.width.height.equalTo(48)
         }
-        
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
 }

@@ -11,7 +11,7 @@ import SnapKit
 
 class PhotosView: UIView {
 
-    let tableView: UITableView = {
+    private(set) lazy var tableView: UITableView = {
         let table = UITableView()
         table.rowHeight = 500
         table.backgroundColor = .black
@@ -20,7 +20,7 @@ class PhotosView: UIView {
         return table
     }()
     
-    let photoSearchBar: UISearchBar = {
+    private(set) lazy var photoSearchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.barStyle = .black
         return searchBar
@@ -37,8 +37,14 @@ class PhotosView: UIView {
     }
     
     private func setupViews() {
+        
+        setupPhotoSearchBar()
+        setupTableView()
+    }
+    
+    private func setupPhotoSearchBar() {
+        
         self.addSubview(photoSearchBar)
-        self.addSubview(tableView)
         
         photoSearchBar.snp.makeConstraints { (make) in
             make.top.equalTo(self.safeAreaLayoutGuide.snp.top)
@@ -46,10 +52,17 @@ class PhotosView: UIView {
             make.height.equalTo(50)
         }
         
+    }
+    
+    private func setupTableView() {
+        
+        self.addSubview(tableView)
+        
         tableView.snp.makeConstraints { (make) in
             make.top.equalTo(photoSearchBar.snp.bottom)
             make.bottom.right.left.equalTo(0)
         }
+        
     }
 
 }
