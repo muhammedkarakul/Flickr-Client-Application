@@ -14,39 +14,39 @@ class PhotoTableViewCell: UITableViewCell {
     
     static let identifier = "cell"
     
-    let buddyiconImageView: UIImageView = {
+    private(set) lazy var buddyiconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 25
         imageView.clipsToBounds = true
         return imageView
     }()
     
-    let ownernameLabel: UILabel = {
+    private(set) lazy var ownernameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         return label
     }()
     
-    lazy var cellTitleStackView: UIStackView = {
+    private lazy var cellTitleStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [buddyiconImageView, ownernameLabel])
         stackView.axis = .horizontal
         stackView.spacing = 8
         return stackView
     }()
     
-    let flickrImageView: UIImageView = {
+    private(set) lazy var  flickrImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
-    let titleLabel: UILabel = {
+    private(set) lazy var  titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         return label
     }()
     
-    lazy var flickrStackView: UIStackView = {
+    private lazy var flickrStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [cellTitleStackView, flickrImageView, titleLabel])
         stackView.distribution = .fill
         stackView.axis = .vertical
@@ -54,7 +54,7 @@ class PhotoTableViewCell: UITableViewCell {
         return stackView
     }()
     
-    let containerView: UIView = {
+    private lazy var  containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 20
         view.clipsToBounds = true
