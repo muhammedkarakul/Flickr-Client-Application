@@ -13,18 +13,6 @@ class Service {
     
     static let shared = Service()
     
-//    public func getRecentPhotos(completion: @escaping ([FlickrImage]?, Error?) -> ()) {
-//        let parameters = [
-//            "method" : "flickr.photos.getRecent",
-//            "api_key" : Environment.shared.apiKey,
-//            "format" : Environment.shared.format,
-//            "nojsoncallback" : "1",
-//            "extras" : "url_q,url_z,owner_name,date_upload"
-//        ]
-//        
-//        getPhotosFromRequest(withParameters: parameters, completion: completion)
-//    }
-    
     public func getRecentPhotos(with page: Int = 1, completion: @escaping (FlickrPagedImageResult?, Error?) -> ()) {
         let parameters: [String : Any] = [
             "method" : "flickr.photos.getRecent",

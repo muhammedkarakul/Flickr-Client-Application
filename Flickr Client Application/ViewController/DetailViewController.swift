@@ -16,7 +16,7 @@ class DetailViewController: UIViewController {
     
     private lazy var detailView = DetailView()
     
-    public var photoViewModel: PhotoViewModel?
+    public var photoDetailViewModel: PhotoDetailViewModel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +29,7 @@ class DetailViewController: UIViewController {
         
         title = "Photo Detail"
         
-        photoViewModel?.configure(detailView)
+        photoDetailViewModel?.configure(detailView)
         
         view.addSubview(detailView)
         
