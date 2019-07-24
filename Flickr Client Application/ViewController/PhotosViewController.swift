@@ -15,15 +15,15 @@ class PhotosViewController: UIViewController {
     
     private var currentPage: Int = 1 {
         didSet {
-            getPageInfo()
+            getFlickrRecentPhotos()
         }
     }
     
-    private let photosView = PhotosView()
+    private lazy var photosView = PhotosView()
     
-    private var flickrPagedImageViewModel: PagedImageViewModel?
+    private var flickrPagedImageResult: FlickrPagedImageResult?
     
-    private var photoViewModels = [PhotoViewModel]() {
+    private var photoViewModels = [PhotoCellViewModel]() {
         didSet {
             photosView.tableView.reloadData()
         }
@@ -38,7 +38,7 @@ class PhotosViewController: UIViewController {
         
         //fetchData()
         
-        getPageInfo()
+        getFlickrRecentPhotos()
     }
     
     private func setupView() {
@@ -65,26 +65,7 @@ class PhotosViewController: UIViewController {
     
     // MARK: - Network
     
-//    private func fetchData() {
-//        
-//        SVProgressHUD.show()
-//        
-//        Service.shared.getRecentPhotos() { (photos, error) in
-//
-//            SVProgressHUD.dismiss()
-//
-//            if let err = error {
-//                SVProgressHUD.showError(withStatus: err.localizedDescription)
-//                return
-//            }
-//
-//            self.photoViewModels += photos?.map({return PhotoViewModel(photo: $0)}) ?? []
-//
-//        }
-//        
-//    }
-    
-    private func getPageInfo() {
+    private func getFlickrRecentPhotos() {
         
         SVProgressHUD.show()
         
@@ -101,9 +82,9 @@ class PhotosViewController: UIViewController {
             
             guard let pagedImageResult = flickrPagedImageResult else { return }
             
-            self.flickrPagedImageViewModel = PagedImageViewModel(flickrPagedImage: pagedImageResult )
+            self.flickrPagedImageResult = pagedImageResult
             
-            self.photoViewModels = pagedImageResult.photo?.map({return PhotoViewModel(photo: $0)}) ?? []
+            self.photoViewModels = pagedImageResult.photo?.map({return PhotoCellViewModel(photo: $0)}) ?? []
             
         }
     }
@@ -119,7 +100,7 @@ extension PhotosViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTableViewCell.identifier, for: indexPath) as! PhotoTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PhotoTableViewCell.identifier, for: indexPath) as? PhotoTableViewCell else { return PhotoTableViewCell() }
         
         if indexPath.row < photoViewModels.count {
             let photoViewModel = photoViewModels[indexPath.row]
@@ -143,7 +124,7 @@ extension PhotosViewController: UITableViewDelegate {
         
         if photoViewModels.count - 1 == indexPath.row {
             
-            guard let maxPageNumber = flickrPagedImageViewModel?.flickrPagedImage?.pages else { return }
+            guard let maxPageNumber = flickrPagedImageResult?.pages else { return }
             
             if currentPage < maxPageNumber {
                 currentPage += 1
@@ -157,7 +138,8 @@ extension PhotosViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detailViewController = DetailViewController()
-        detailViewController.photoViewModel = photoViewModels[indexPath.row]
+        guard let photo = photoViewModels[indexPath.row].photo else { return }
+        detailViewController.photoDetailViewModel = PhotoDetailViewModel(photo: photo)
         navigationController?.pushViewController(detailViewController, animated: true)
     }
     
@@ -185,7 +167,7 @@ extension PhotosViewController: UISearchBarDelegate {
                 return
             }
             
-            self.photoViewModels = photos?.map({return PhotoViewModel(photo: $0)}) ?? []
+            self.photoViewModels = photos?.map({return PhotoCellViewModel(photo: $0)}) ?? []
             
         }
     }
