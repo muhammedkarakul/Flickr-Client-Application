@@ -79,9 +79,8 @@ class PhotoTableViewCell: UITableViewCell {
         
         setupFlickrStackView()
         
-        setupUserNameLabel()
-        
         setupBuddyIconImageView()
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -109,18 +108,6 @@ class PhotoTableViewCell: UITableViewCell {
             make.bottom.right.equalTo(-8)
         }
         
-    }
-    
-    private func setupUserNameLabel() {
-        ownernameLabel.snp.makeConstraints { (make) in
-            make.height.equalTo(50)
-        }
-    }
-    
-    private func setupTitleLabel() {
-        titleLabel.snp.makeConstraints { (make) in
-            make.height.equalTo(50)
-        }
     }
     
     private func setupBuddyIconImageView() {

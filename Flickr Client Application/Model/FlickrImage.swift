@@ -10,7 +10,7 @@ import UIKit
 
 // TODO: - FlickrPhoto - Photo
 
-struct FlickrPhotos: Codable {
+struct FlickrImage: Codable {
     let owner : String?
     let ownername: String?
     let server: String?
