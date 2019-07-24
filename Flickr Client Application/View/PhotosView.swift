@@ -48,8 +48,8 @@ class PhotosView: UIView {
         
         photoSearchBar.snp.makeConstraints { (make) in
             make.top.equalTo(self.safeAreaLayoutGuide.snp.top)
-            make.width.equalToSuperview()
-            make.height.equalTo(50)
+            make.left.right.equalTo(0)
+            
         }
         
     }

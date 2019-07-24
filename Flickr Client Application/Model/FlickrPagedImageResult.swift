@@ -9,7 +9,7 @@
 import Foundation
 
 struct FlickrPagedImageResult: Codable {
-    let photo : [FlickrPhotos]?
+    let photo : [FlickrImage]?
     let page: Int?
     let pages: Int?
     let perpage: Int?

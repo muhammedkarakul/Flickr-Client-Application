@@ -93,10 +93,6 @@ class DetailView: UIView {
         
         setupContainerStackView()
         
-        setupOwnerNameLabel()
-        
-        setupTitleLabel()
-        
         setupPhotoImageView()
         
         setupBuddyIconImageView()
@@ -122,18 +118,6 @@ class DetailView: UIView {
         containerStackView.snp.makeConstraints { (make) in
             make.top.left.equalTo(8)
             make.bottom.right.equalTo(-8)
-        }
-    }
-    
-    private func setupOwnerNameLabel() {
-        ownernameLabel.snp.makeConstraints { (make) in
-            make.height.equalTo(50)
-        }
-    }
-    
-    private func setupTitleLabel() {
-        titleLabel.snp.makeConstraints { (make) in
-            make.height.equalTo(50)
         }
     }
     

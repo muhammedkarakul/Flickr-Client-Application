@@ -10,10 +10,18 @@ import UIKit
 import SVProgressHUD
 
 class PhotosViewController: UIViewController {
-
+    
     // MARK: - Properties
     
+    private var currentPage: Int = 1 {
+        didSet {
+            getPageInfo()
+        }
+    }
+    
     private let photosView = PhotosView()
+    
+    private var flickrPagedImageViewModel: PagedImageViewModel?
     
     private var photoViewModels = [PhotoViewModel]() {
         didSet {
@@ -28,7 +36,9 @@ class PhotosViewController: UIViewController {
         
         setupView()
         
-        fetchData()
+        //fetchData()
+        
+        getPageInfo()
     }
     
     private func setupView() {
@@ -55,23 +65,47 @@ class PhotosViewController: UIViewController {
     
     // MARK: - Network
     
-    fileprivate func fetchData() {
+//    private func fetchData() {
+//        
+//        SVProgressHUD.show()
+//        
+//        Service.shared.getRecentPhotos() { (photos, error) in
+//
+//            SVProgressHUD.dismiss()
+//
+//            if let err = error {
+//                SVProgressHUD.showError(withStatus: err.localizedDescription)
+//                return
+//            }
+//
+//            self.photoViewModels += photos?.map({return PhotoViewModel(photo: $0)}) ?? []
+//
+//        }
+//        
+//    }
+    
+    private func getPageInfo() {
         
         SVProgressHUD.show()
         
-        Service.getRecentPhotos() { (photos, error) in
+        Service.shared.getRecentPhotos(with: currentPage) { (flickrPagedImageResult, error) in
             
             SVProgressHUD.dismiss()
             
             if let err = error {
-                SVProgressHUD.showError(withStatus: err.localizedDescription)
+                print("ERROR: \(err)")
                 return
             }
             
-            self.photoViewModels += photos?.map({return PhotoViewModel(photo: $0)}) ?? []
+            print("API RETURNED PAGE: \(flickrPagedImageResult?.page ?? 0)")
+            
+            guard let pagedImageResult = flickrPagedImageResult else { return }
+            
+            self.flickrPagedImageViewModel = PagedImageViewModel(flickrPagedImage: pagedImageResult )
+            
+            self.photoViewModels = pagedImageResult.photo?.map({return PhotoViewModel(photo: $0)}) ?? []
             
         }
-        
     }
 
 }
@@ -89,11 +123,10 @@ extension PhotosViewController: UITableViewDataSource {
         
         if indexPath.row < photoViewModels.count {
             let photoViewModel = photoViewModels[indexPath.row]
-            
+
             photoViewModel.configure(cell)
-            
+
         }
-        
         
         return cell
     }
@@ -103,6 +136,24 @@ extension PhotosViewController: UITableViewDataSource {
 // MARK: - Table View Delegate
 
 extension PhotosViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        print("WILL DISPLAY CELL: \(indexPath.row) OF PAGE: \(currentPage)")
+        
+        if photoViewModels.count - 1 == indexPath.row {
+            
+            guard let maxPageNumber = flickrPagedImageViewModel?.flickrPagedImage?.pages else { return }
+            
+            if currentPage < maxPageNumber {
+                currentPage += 1
+                tableView.setContentOffset(.zero, animated: false)
+            } else {
+                SVProgressHUD.showError(withStatus: "No more photo available!")
+            }
+            
+        }
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detailViewController = DetailViewController()
@@ -125,7 +176,7 @@ extension PhotosViewController: UISearchBarDelegate {
         
         SVProgressHUD.show()
         
-        Service.serachPhoto(withText: text) { (photos, error) in
+        Service.shared.serachPhoto(withText: text) { (photos, error) in
             
             SVProgressHUD.dismiss()
             
